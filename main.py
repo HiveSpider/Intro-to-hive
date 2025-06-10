@@ -661,11 +661,51 @@ class one_hive_rule(Scene):
     def construct(self):
         one_hive_rule.play_scene(self)
     def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 52.m4a")
         rules= freedom_of_movement.rules
         rules[1].set_opacity(0.3)
         pointer = freedom_of_movement.pointer
         s.add(*rules, pointer)
         s.play(Transform(pointer,pointer.copy().next_to(rules[1], direction=LEFT)), ApplyMethod(rules[0].set_opacity,0.3), ApplyMethod(rules[1].set_opacity,1))
+        analysis_file='./media/analysis_files/analysis_08-Jun-2025_22_59_31.json'
+        with open(analysis_file, 'r') as file:
+            data = json.load(file)
+        backing_game=game(s,analysis_json=data, center = 2*RIGHT + DOWN)
+        backing_game.next_n_moves(12)
+        backing_game.set_tiles_to_target()
+        s.remove(*backing_game.get_live_tiles())
+        s.play(*[DrawBorderThenFill(i) for i in backing_game.get_live_tiles()])
+        s.play(Wait(1))
+        wA = backing_game.bugs["wA1"].tile
+        s.play(backing_game.move("bA1", "bG1-", curve_dir=-1))
+        group1=('bG1', 'bS1', 'bA1')
+        group2=('bP','bQ','bL','wL','wQ','wM','wA1','wS1','wG1')
+        g1=VGroup(backing_game.bugs[i].tile for i in group1)
+        g2=VGroup(backing_game.bugs[i].tile for i in group2)
+        g3=VGroup([backing_game.bugs[i].tile for i in ("wS1","wG1")])
+        big_x = VGroup(Line(LEFT+UP, RIGHT +DOWN, color=RED),Line(LEFT-UP,RIGHT -DOWN,color=RED)).scale(2).move_to(g2.get_center())
+        s.play(LaggedStart(Wiggle(g1), Wiggle(g2),Write(big_x), lag_ratio=0.4))
+        s.play(Wait(1))
+        s.play(LaggedStart(Unwrite(big_x),backing_game.move("bA1", "bG1\\", curve_dir=1),lag_ratio=0.6))
+        s.play(Wait(0.5))
+        s.play(ScaleInPlace(wA,0.01))
+        s.play(Wait(1))
+        s.play(Wiggle(g3))
+        s.play(ScaleInPlace(wA,100))
+        s.play(Wait(0.5))
+        s.play(backing_game.move("wA1", "wG1\\", curve_dir=-1))
+        small_x=VGroup(Line(LEFT+UP,RIGHT+DOWN, color=RED),Line(LEFT+DOWN, RIGHT+UP, color=RED)).move_to(wA.get_center()).scale(0.5)
+        s.play(Write(small_x))
+        s.wait()
+        s.play(Unwrite(small_x))
+        s.play(backing_game.move("wA1",'wS1\\', curve_dir=1))
+        s.wait(0.4)
+        s.play(LaggedStart(*[Wiggle(backing_game.bugs[i].tile) for i in ('wS1','wA1','wL','bL','bA1','bG1')],lag_ratio=0.3))
+        s.play(LaggedStart(FadeOut(*backing_game.get_live_tiles(), VGroup(*rules, pointer))))
 
 
+class piece_rules(Scene):
+    def construct(self):
+        './meda/analysis_files/analysis_08-Jun-2025_22_55_03.json'
+        pass
 

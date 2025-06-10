@@ -1,1 +1,138 @@
-{"current_node":{"node_id":10,"value":{"turn":11,"piece":"wG1","position":"wS1/"},"parent":9},"tree":{"name":"analysis","nodes":[{"node_id":0,"value":{"turn":1,"piece":"wL","position":""},"parent":null},{"node_id":1,"value":{"turn":2,"piece":"bL","position":"wL-"},"parent":0},{"node_id":2,"value":{"turn":3,"piece":"wA1","position":"\\wL"},"parent":1},{"node_id":3,"value":{"turn":4,"piece":"bA1","position":"bL/"},"parent":2},{"node_id":4,"value":{"turn":5,"piece":"wQ","position":"/wL"},"parent":3},{"node_id":5,"value":{"turn":6,"piece":"bQ","position":"bL\\"},"parent":4},{"node_id":6,"value":{"turn":7,"piece":"wM","position":"\\wQ"},"parent":5},{"node_id":7,"value":{"turn":8,"piece":"bG1","position":"\\bA1"},"parent":6},{"node_id":8,"value":{"turn":9,"piece":"wS1","position":"\\wA1"},"parent":7},{"node_id":9,"value":{"turn":10,"piece":"bP","position":"bA1\\"},"parent":8},{"node_id":10,"value":{"turn":11,"piece":"wG1","position":"wS1/"},"parent":9}]},"hashes":{"9933636654818954579":0,"12995740153966148969":3,"10054411001680131835":4,"9379469348765136643":9,"14401354401335139582":10,"3277411835467400030":6,"3134152141365092189":1,"5535235286109524689":5,"2932422814023871793":2,"9430857762421717091":7,"10677251223252596522":8},"game_type":"MLP"}
+{
+    "current_node": {
+        "node_id": 10,
+        "value": {
+            "turn": 11,
+            "piece": "wG1",
+            "position": "wS1/"
+        },
+        "parent": 9
+    },
+    "tree": {
+        "name": "analysis",
+        "nodes": [
+            {
+                "node_id": 0,
+                "value": {
+                    "turn": 1,
+                    "piece": "wL",
+                    "position": ""
+                },
+                "parent": null
+            },
+            {
+                "node_id": 1,
+                "value": {
+                    "turn": 2,
+                    "piece": "bL",
+                    "position": "wL-"
+                },
+                "parent": 0
+            },
+            {
+                "node_id": 2,
+                "value": {
+                    "turn": 3,
+                    "piece": "wA1",
+                    "position": "\\wL"
+                },
+                "parent": 1
+            },
+            {
+                "node_id": 3,
+                "value": {
+                    "turn": 4,
+                    "piece": "bA1",
+                    "position": "bL/"
+                },
+                "parent": 2
+            },
+            {
+                "node_id": 4,
+                "value": {
+                    "turn": 5,
+                    "piece": "wQ",
+                    "position": "/wL"
+                },
+                "parent": 3
+            },
+            {
+                "node_id": 5,
+                "value": {
+                    "turn": 6,
+                    "piece": "bQ",
+                    "position": "bL\\"
+                },
+                "parent": 4
+            },
+            {
+                "node_id": 6,
+                "value": {
+                    "turn": 7,
+                    "piece": "wM",
+                    "position": "\\wQ"
+                },
+                "parent": 5
+            },
+            {
+                "node_id": 7,
+                "value": {
+                    "turn": 8,
+                    "piece": "bG1",
+                    "position": "\\bA1"
+                },
+                "parent": 6
+            },
+            {
+                "node_id": 8,
+                "value": {
+                    "turn": 9,
+                    "piece": "wS1",
+                    "position": "\\wA1"
+                },
+                "parent": 7
+            },
+            {
+                "node_id": 9,
+                "value": {
+                    "turn": 10,
+                    "piece": "bP",
+                    "position": "bA1\\"
+                },
+                "parent": 8
+            },
+            {
+                "node_id": 10,
+                "value": {
+                    "turn": 11,
+                    "piece": "wG1",
+                    "position": "wS1/"
+                },
+                "parent": 9
+            },
+            {
+                "node_id": 11,
+                "value": {
+                    "turn": 12,
+                    "piece": "bS1",
+                    "position": "bG1/"
+                },
+                "parent": 10
+            }
+        ]
+    },
+    "hashes": {
+        "9933636654818954579": 0,
+        "12995740153966148969": 3,
+        "10054411001680131835": 4,
+        "9379469348765136643": 9,
+        "14401354401335139582": 10,
+        "3277411835467400030": 6,
+        "3134152141365092189": 1,
+        "5535235286109524689": 5,
+        "2932422814023871793": 2,
+        "9430857762421717091": 7,
+        "10677251223252596522": 8
+    },
+    "game_type": "MLP"
+}
