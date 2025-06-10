@@ -3,3 +3,6 @@ media/texts/*
 media/videos/*
 media/Tex/*
 media/images/*
+__pycache__/
+pyproject.toml
+uv.lock

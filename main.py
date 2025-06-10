@@ -704,8 +704,22 @@ class one_hive_rule(Scene):
         s.play(LaggedStart(FadeOut(*backing_game.get_live_tiles(), VGroup(*rules, pointer))))
 
 
+
 class piece_rules(Scene):
     def construct(self):
-        './meda/analysis_files/analysis_08-Jun-2025_22_55_03.json'
-        pass
+        piece_rules.play_scene(self)
+    def play_scene(s):
+        analysis_file='./media/analysis_files/analysis_08-Jun-2025_22_55_03.json'
+        with open(analysis_file, 'r') as file:
+            data = json.load(file)
+        backing_game=game(s,analysis_json=data)
+        backing_game.next_n_moves(8)
+        backing_game.set_tile_positions()
+        s.add(*backing_game.get_live_tiles())
+        s.play(Wait(1))
+        for i in ('wL\\','/bA1','bA1\\'):
+            s.play(backing_game.move('wS1', i, curve_dir=-1), run_time=0.4)
+        s.play(MoveAlongPath(backing_game.bugs['bS1'].tile, backing_game.get_multi_path('\\bQ','\\bL','wA1/','\\wA1', curve_dir=-1),rate_func=linear, run_time=1.2))
+
+
 

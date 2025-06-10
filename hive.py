@@ -149,13 +149,29 @@ class game():
         # cur_bug.svg_t.set_z_index(z_index)
         self.scene.bring_to_front(cur_bug.tile)
         if curve_dir:
-            start = cur_bug.tile.get_x()*RIGHT + cur_bug.tile.get_y()*UP
-            end = cur_bug.tile.target.get_x()*RIGHT + cur_bug.tile.target.get_y()*UP
+            start = cur_bug.tile.get_center()
+            end = cur_bug.tile.target.get_center()
             dir = rotate_vector(end - start, curve_dir*PI/2) * 0.2
             curve = CubicBezier(start, start +dir, end + dir, end)
             return MoveAlongPath(cur_bug.tile, curve)
         return AnimationGroup(MoveToTarget(cur_bug.tile, run_time=run_time), )
-    
+    def get_location(self,position):
+        coords = self.get_coords_from_position(position)
+        return coords[0]*self.right_basis + coords[1]*self.up_basis + self.center
+    def get_path_from(self, source, to, curve_dir=0, curve_to_append=None):
+        a = self.get_location(source)
+        b = self.get_location(to)
+        if curve_dir==0:
+            return Line(a, b)
+        dir = rotate_vector(b - a, curve_dir*PI/2) * 0.2
+        if curve_to_append != None:
+            curve_to_append.add_cubic_bezier_curve(a, a+ dir, b+dir, b)
+        return CubicBezier(a, a+ dir, b+dir, b)
+    def get_multi_path(self, *stops, curve_dir):
+        toRet = self.get_path_from(stops[0],stops[1],curve_dir)
+        for i in range(2, len(stops)):
+            self.get_path_from(stops[i-1],stops[i], curve_dir=curve_dir, curve_to_append=toRet)
+        return toRet
     def next_n_moves(self, n, run_time = 1):
         all_moves = []
         for i in range(n):
