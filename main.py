@@ -708,18 +708,184 @@ class one_hive_rule(Scene):
 class piece_rules(Scene):
     def construct(self):
         piece_rules.play_scene(self)
-    def play_scene(s):
-        analysis_file='./media/analysis_files/analysis_08-Jun-2025_22_55_03.json'
+    def get_pieces(s):
+        bg = game(s)
+        bugs = [bg.bugs[i].tile for i in ('wQ', 'wA1', 'wS1', 'wG1', 'wB1', 'wM', 'wL', 'wP')]
+        for i in range(len(bugs)):
+            bugs[i].rotate(-PI/6).to_edge().set_y(3.5-i)
+        instructions = ['Crawl one space', 'Crawl any distance', 'Crawl 3 spaces', 'Jump in line to empty spot','Move 1 or Climb','Copy adjacent bug','Crawl 2 on top, then one down','Move 1 or warp adjacent bug']
+        text = [Text(instructions[i],font_size = 30).next_to(bugs[i]) for i in range(len(instructions))]
+        analysis_file='./media/analysis_files/analysis_11-Jun-2025_17_38_23.json'
         with open(analysis_file, 'r') as file:
             data = json.load(file)
-        backing_game=game(s,analysis_json=data)
-        backing_game.next_n_moves(8)
+        backing_game=game(s, tile_size=0.75,analysis_json=data, center=2*RIGHT + 0.75*0.5*rotate_vector(LEFT, -PI/3))
+        backing_game.next_n_moves(18)
         backing_game.set_tile_positions()
-        s.add(*backing_game.get_live_tiles())
-        s.play(Wait(1))
-        for i in ('wL\\','/bA1','bA1\\'):
-            s.play(backing_game.move('wS1', i, curve_dir=-1), run_time=0.4)
-        s.play(MoveAlongPath(backing_game.bugs['bS1'].tile, backing_game.get_multi_path('\\bQ','\\bL','wA1/','\\wA1', curve_dir=-1),rate_func=linear, run_time=1.2))
+        return bugs, text, backing_game
 
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 61.m4a")
+
+
+        pieces, text, backing_game = piece_rules.get_pieces(s)
+        #s.add(*text)
+        s.remove(*backing_game.get_live_tiles())
+        s.play(LaggedStart([FadeIn(i, shift=RIGHT) for i in pieces]))
+        s.play(LaggedStart([DrawBorderThenFill(i) for i in backing_game.get_live_tiles()]))
+
+        #s.add(*backing_game.get_live_tiles())
+        s.play(Wait(1))
+        moves = [
+            [["wQ \\wL", "bQ bL\\", "wQ -wL", 'bQ bL-', "wQ \\wL", "bQ bL\\",'wQ wL/', 'bQ /bL'], [-1,-1,-1,-1,1,1,1,1], 0.8],
+            [['wA1 wB1-', 'wA1 wG1-', 'wA1 bL-', 'wA1 bQ-', 'wA1 bM-', 'wA1 bP-','wA1 bP\\','wA1 /bP','bA1 -bB1', 'bA1 -bG1', 'bA1 -wL', 'bA1 -wQ', 'bA1 -wM', 'bA1 -wP','bA1 \\wP','bA1 wP/', 
+              'wA1 bP\\', 'wA1 bP-', 'wA1 bM-', 'wA1 bQ-', 'wA1 bL-', 'wA1 wG1-', 'wA1 wB1-', 'wA1 wM-', 'bA1 \\wP', 'bA1 -wP', 'bA1 -wM', 'bA1 -wQ', 'bA1 -wL', 'bA1 -bG1', 'bA1 -bB1', 'bA1 -bM'
+              ], [1]*16+[-1]*16, 0.2],
+            [['wS1 wA1-', 'wS1 wB1-', 'wS1 wG1-', 'bS1 -bA1', 'bS1 -bB1', 'bS1 -bG1', 'wS1 bL-', 'wS1 bQ-', 'wS1 bM-',
+              'bS1 -wL','bS1 -wQ','bS1 -wM','wS1 bQ-','wS1 bL-', 'wS1 wG1-','bS1 -wQ','bS1 -wL','bS1 -bG1','wS1 wB1-','wS1 wA1-', 'wS1 wP-', 'bS1 -bB1','bS1 -bA1', 'bS1 -bP'], [1]*12 + [-1]*12, 0.4]
+        ]
+
+        for i in range(len(moves)):
+            if i == 1:
+                s.add_sound(".\\media\\narration\\New Recording 62.m4a", 0.5)
+                s.play(Wait(1))
+            elif i == 2:
+                s.add_sound(".\\media\\narration\\New Recording 6.m4a")
+                s.play(Wait(0.5))
+            s.play(AddTextLetterByLetter(text[i]))
+            for m in range(len(moves[i][0])):
+                move = moves[i][0][m].split(' ')
+                s.play(backing_game.move(move[0], move[1], curve_dir=moves[i][1][m]),run_time=moves[i][2])
+        s.play(Wait(6))
+        # for i in ('wL\\','/bA1','bA1\\'):
+        #     s.play(backing_game.move('wS1', i, curve_dir=-1), run_time=0.4)
+        # s.play(MoveAlongPath(backing_game.bugs['bS1'].tile, backing_game.get_multi_path('\\bQ','\\bL','wA1/','\\wA1', curve_dir=-1),rate_func=linear, run_time=1.2))
+
+class piece_rules_2(Scene):
+    def construct(self):
+        piece_rules_2.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 27.m4a")
+        pieces, text, backing_game = piece_rules.get_pieces(s)
+        s.add(*pieces, *backing_game.get_live_tiles(), *text[0:3])
+        s.play(Wait(0.5))
+        s.play(AddTextLetterByLetter(text[3]))
+        s.play(Wait(0.5))
+        moves = ['wG1 -wL', 'bG1 bL-', 'wG1 wL-', 'bG1 -bL', 'wG1 /bP', 'bG1 wP/', 'wG1 wL-', 'bG1 -bL', 'wG1 wS1/', 'bG1 /bS1', 'wG1 wL-', 'bG1 -bL',]
+        for move in moves:
+            bug, pos = move.split(' ')
+            tile = backing_game.bugs[bug].tile
+            rt = 1.25
+            s.play(AnimationGroup(Succession(ScaleInPlace(tile, 5/4, run_time=rt/2),ScaleInPlace(tile, 4/5, run_time=rt/2)), AnimationGroup(backing_game.move(bug,pos,curve_dir=0.0001, run_time=rt), run_time=rt)))
+        s.play(Wait(1))
+
+class piece_rules_3(Scene):
+    def construct(self):
+        piece_rules_3.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 28.m4a")
+        pieces, text, backing_game = piece_rules.get_pieces(s)
+        s.add(*pieces, *backing_game.get_live_tiles(), *text[0:4])
+        s.play(AddTextLetterByLetter(text[4][:5]))
+        moves = ['wB1 wG1-', 'bB1 -bG1','wB1 bL-','bB1 -wL','wB1 bQ-', 'bB1 -wQ','wB1 bQ', 'bB1 wQ','wB1 bG1', 'bB1 wG1','wB1 bL', 'bB1 wL']
+        for m in range(len(moves)):
+            if m == 6:
+                s.play(AddTextLetterByLetter(text[4][5:]))
+            bug, pos = moves[m].split(' ')
+            s.play(backing_game.move(bug,pos, curve_dir=(1 if m < 6 else -1 if m == 11 else 0), run_time=1 if m < 6 else 1.5))
+        hexes = (backing_game.hex_at_position('-wL').set_stroke(GRAY),backing_game.hex_at_position('bL-').set_stroke(WHITE))
+        s.play(Wait(5))
+        s.play(GrowFromPoint(hexes[0],hexes[0].get_center()+rotate_vector(DOWN/2,PI/3)), GrowFromPoint(hexes[1], hexes[1].get_center()+rotate_vector(UP/2,PI/3)))
+        s.play(Wait(3))
+        resetMoves = ['wB1 wG1', 'bB1 bG1', 'wB1 wQ-', 'bB1 -bQ']
+        for m in range(len(resetMoves)):
+            bug, pos = resetMoves[m].split(' ')
+            animations = [backing_game.move(bug, pos, curve_dir=-1 if m == 0 else 0)]
+            if m < 2:
+                animations.append(ShrinkToCenter(hexes[1-m], rate_func=rush_from))
+            s.play(AnimationGroup(animations), run_time=1.5)
+
+class piece_rules_4(Scene):
+    def construct(self):
+        piece_rules_4.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 29.m4a")
+        pieces, text, backing_game = piece_rules.get_pieces(s)
+        s.add(*pieces, *backing_game.get_live_tiles(), *text[0:5])
+        s.play(AddTextLetterByLetter(text[5]))
+        s.wait(1)
+        bM=backing_game.bugs['bM']
+        backing_game.move('bA2','bA1-')
+        backing_game.set_tile_positions()
+        bA = backing_game.bugs['bA2']
+        bA.tile.rotate(2*PI/3)
+        bA.svg_t.rotate(-PI/3)
+        s.remove(bA.tile)
+        s.play(Succession(Wiggle(bM.tile, run_time=2),Rotate(bM.svg_bug,PI/3,about_point=bM.svg_t.get_center()), AnimationGroup(FadeOut(bM.svg_bug),FadeIn(bA.svg_bug))))
+        s.wait(0.67)
+        s.remove(bM.svg_t)
+        s.add(bA.tile)
+        moves = ['bA2 bP-','bA2 bP\\', 'bA2 /bP', 'bA2 /bS1', 'bA2 -bS1', 'bA2 \\bS1', 'bA2 -bB1','bA2 -bG1']
+        for m in moves:
+            s.play(backing_game.move(*m.split(' '), curve_dir=1), run_time=0.2)
+        s.play(Wait(0.5))
+        backing_game.move('bM', '-bG1')
+        backing_game.set_tile_positions()
+        s.add(bM.tile)
+        s.bring_to_front(bA.tile)
+        s.play(FadeOut(bA.tile))
+        s.remove(bA.svg_t)
+        s.add(bM.tile)
+        s.play(Rotate(bM.svg_bug, -PI/3, about_point=bM.svg_t.get_center()))
+        wM = backing_game.bugs['wM']
+        backing_game.move('wB2', '-wA1')
+        wB = backing_game.bugs['wB2']
+        wB.tile.rotate(-2*PI/3)
+        s.remove(wB.tile)
+        s.play(Rotate(wM.svg_bug,-PI, about_point=wM.svg_t.get_center()))
+        backing_game.set_tile_positions()
+        s.play(AnimationGroup(FadeIn(wB.svg_bug), FadeOut(wM.svg_bug)))
+        s.remove(wM.svg_t)
+        s.play(backing_game.move('wB2', 'wP'))
+        backing_game.move('wM','wP')
+        backing_game.set_tile_positions()
+        s.add(wM.tile)
+        s.bring_to_front(wB.tile)
+        s.play(FadeOut(wB.tile))
+        s.play(Rotate(wM.svg_bug, PI, about_point=wM.svg_t.get_center()))
+
+        backing_game.move('bG2', '-bG1')
+        backing_game.set_tile_positions()
+        bG = backing_game.bugs['bG2']
+        bG.tile.rotate(-PI/3)
+        s.remove(bG.tile)
+        s.play(Rotate(bM.svg_bug, -2*PI/3, about_point=bM.svg_t.get_center()))
+        s.play(AnimationGroup(FadeIn(bG.svg_bug), FadeOut(bM.svg_bug)))
+        bG.svg_t.rotate(-PI/3)
+        s.add(bG.svg_t)
+        s.remove(bM.tile)
+        s.remove(bM.svg_t)
+        s.remove(bM.svg_bug)
+        s.play(AnimationGroup(Succession(ScaleInPlace(bG.tile, 5/4, run_time=0.5),ScaleInPlace(bG.tile, 4/5, run_time=0.5)),backing_game.move('bG2','bA1-', curve_dir=0.0001)))
+        backing_game.move('bM', 'bA1-')
+        backing_game.set_tile_positions()
+        s.add(bM.tile)
+        s.bring_to_front(bG.tile)
+        s.play(FadeOut(bG.tile))
+        s.play(Rotate(bM.svg_bug, 2*PI/3, about_point=bM.svg_t.get_center()))
+
+
+        
+        #s.play(Rotate(wM.svg_bug,-PI))
+        wB.svg_bug.rotate(PI, about_point=wB.svg_t.get_center())
+        s.play(AnimationGroup(FadeIn(wB.svg_bug), FadeOut(wM.svg_bug)))
+        s.remove(wM.svg_t)
+        s.play(backing_game.move('wB2', '-wA1'))
+        backing_game.move('wM','-wA1')
+        backing_game.set_tile_positions()
+        s.add(wM.tile)
+        s.bring_to_front(wB.tile)
+        s.play(FadeOut(wB.tile))
+
+        s.play(Wait(4))
 
 

@@ -105,7 +105,7 @@ class game():
         return LaggedStart(*[(x.draw(animation, run_time = run_time)) for x in self.bugs.values()])
     def hex_at_position(self, position, rotate_off=0):
         coords= self.get_coords_from_position(position)
-        return RegularPolygon().move_to(self.right_basis*coords[0] + self.up_basis*coords[1]).scale(0.5*self.tile_size).rotate(PI/6 + rotate_off)
+        return RegularPolygon().move_to(self.center + self.right_basis*coords[0] + self.up_basis*coords[1]).scale(0.5*self.tile_size).rotate(PI/6 + rotate_off)
     def get_coords_from_position(self,position):
         rel_bug = self.bugs["".join(x for x in position if x.isalnum())]
         rel_coor = rel_bug.game_coordinate
@@ -154,7 +154,7 @@ class game():
             dir = rotate_vector(end - start, curve_dir*PI/2) * 0.2
             curve = CubicBezier(start, start +dir, end + dir, end)
             return MoveAlongPath(cur_bug.tile, curve)
-        return AnimationGroup(MoveToTarget(cur_bug.tile, run_time=run_time), )
+        return AnimationGroup(MoveToTarget(cur_bug.tile, run_time=run_time), run_time=run_time )
     def get_location(self,position):
         coords = self.get_coords_from_position(position)
         return coords[0]*self.right_basis + coords[1]*self.up_basis + self.center
