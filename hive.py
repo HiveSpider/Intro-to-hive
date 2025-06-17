@@ -140,6 +140,7 @@ class game():
         cur_bug = self.bugs[piece]
         cur_bug.game_coordinate = coords
         cur_bug.z_index = z_index
+        cur_bug.tile.z_index = z_index
         new_coord = self.center + self.right_basis * cur_bug.game_coordinate[0] +  self.up_basis * cur_bug.game_coordinate[1] + z_index * self.climb_basis
         cur_bug.tile.generate_target().set_x(new_coord[0]).set_y(new_coord[1]).set_z(z_index).set_z_index(z_index)
         # cur_bug.tile.target.set_z_index(z_index)
