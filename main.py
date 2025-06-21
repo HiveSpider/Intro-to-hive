@@ -1231,3 +1231,21 @@ class real_goal(Scene):
         s.play(Wiggle(efficiency, rotation_angle=0))
         s.play(LaggedStart(FadeOut(goal_text, surround_text), VGroup(goal_text_2, efficiency, control, *lines).animate.shift(UP*4), lag_ratio=0.15))
         
+class team(Scene):
+    def construct(self):
+        team.play_scene(self)
+    def play_scene(s):
+        goal_text = Text("Goal").shift(DOWN/2).shift(UP*4)
+        efficiency = Text("Efficiency").shift(2*UP, 3*LEFT)
+        control = Text("Control").shift(2*UP, 3*RIGHT)
+        lines = (Line(DOWN, LEFT*3+1.5*DOWN),Line(DOWN, RIGHT*3+1.5*DOWN)).shift(UP*4)
+        s.add(goal_text, efficiency, control, *lines)
+        bg1=game(s, center=3*LEFT,tile_size=0.5)
+        bg1.make_moves(['bQ','bA1 /bQ','bG1 -bA1','bB1 \\bG1','bS1 bB1/','bL bS1-',
+                    'wQ bQ-','wA1 bA1\\','wG1 /bG1', 'wB1 -bB1', 'wS1 \\bS1','wL bL/'])
+        bg1.set_tile_positions()
+        s.play(FadeIn(VGroup(bg1.get_live_bugs())))
+        
+        
+        
+        
