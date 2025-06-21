@@ -1171,7 +1171,7 @@ class defense_game(Scene):
         s.add_sound(".\\media\\narration\\New Recording 60.m4a")
         s.add_sound(".\\media\\narration\\New Recording 63.m4a", time_offset=11)
         analysis_file = ".\\media\\analysis_files\\analysis_17-Jun-2025_20_14_11.json"
-        backing_game = show_classic_set.get_classic_game(s, analysis_file, True, UP+LEFT/2)
+        backing_game = show_classic_set.get_classic_game(s, analysis_file, True)
         classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]        
         spots = []
         for i in classic_pieces:
@@ -1181,6 +1181,7 @@ class defense_game(Scene):
         backing_game.set_tile_positions()
         s.add(*[i.tile for i in classic_pieces])
         s.play(*[MoveAlongPath(spot[0], Line(spot[0].get_center(), spot[1])) for spot in spots])
+        backing_game.center= UP+LEFT/2
         pass_turns = [34,36,38,40,42,44,46]
         pass_text = Text('White passes').move_to(3*LEFT + DOWN)
         s.wait(3)
@@ -1200,3 +1201,33 @@ class defense_game(Scene):
             s.play(backing_game.next_move(), run_time=a)
         s.wait(2)
         s.play(ShrinkToCenter(VGroup([i.tile for i in backing_game.white_bugs + backing_game.black_bugs])))
+
+class real_goal(Scene):
+    def construct(self):
+        real_goal.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 64.m4a")
+        goal_text=Text('Goal of hive:').shift(UP*2+4*LEFT)
+        surround_text=Text('Surround the enemy queen').next_to(goal_text)
+        goal_text.shift(UP*0.08)
+        s.play(AddTextLetterByLetter(goal_text))
+        s.wait(1)
+        s.play(AddTextLetterByLetter(surround_text))
+        strikethrough = Line(goal_text.get_center()+ goal_text.width/2*LEFT,goal_text.get_center()+ goal_text.width/2*RIGHT, stroke_width=12)
+        s.play(Write(strikethrough))
+        s.wait(1)
+        s.play(Transform(goal_text, Text('How you win:').next_to(surround_text, LEFT)), FadeOut(strikethrough))
+        s.wait(1.5)
+        goal_text_2 = Text("Goal").shift(DOWN/2)
+        efficiency = Text("Efficiency").shift(2*DOWN, 3*LEFT)
+        control = Text("Control").shift(2*DOWN, 3*RIGHT)
+        lines = (Line(DOWN, LEFT*3+1.5*DOWN),Line(DOWN, RIGHT*3+1.5*DOWN))
+        s.play(FadeIn(goal_text_2))
+        s.play(Write(lines[0]),FadeIn(efficiency))
+        s.play(Write(lines[1]),FadeIn(control))
+        s.wait()
+        s.play(Wiggle(control, rotation_angle=0))
+        s.wait(2)
+        s.play(Wiggle(efficiency, rotation_angle=0))
+        s.play(LaggedStart(FadeOut(goal_text, surround_text), VGroup(goal_text_2, efficiency, control, *lines).animate.shift(UP*4), lag_ratio=0.15))
+        
