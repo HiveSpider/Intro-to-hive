@@ -54,10 +54,10 @@ class game():
                 "bP": bug("Pillbug","black",height=tile_size),
                 "wQ": bug("Queen","white",height=tile_size, off_y=-0.08*tile_size, off_x=0.04*tile_size),
                 "bQ": bug("Queen","black",height=tile_size, off_y=-0.08*tile_size, off_x=0.04*tile_size),
-                "wS1": bug("Spider","white",height=tile_size),
-                "bS1": bug("Spider","black",height=tile_size),
-                "wS2": bug("Spider","white",height=tile_size),
-                "bS2": bug("Spider","black",height=tile_size)
+                "wS1": bug("Spider","white",height=tile_size, dot_id=1),
+                "bS1": bug("Spider","black",height=tile_size, dot_id=1),
+                "wS2": bug("Spider","white",height=tile_size, dot_id=2),
+                "bS2": bug("Spider","black",height=tile_size, dot_id=2)
                          }
         self.white_bugs = list(dict(filter(lambda x: x[0][0]=="w", self.bugs.items())).values())
         self.black_bugs = list(dict(filter(lambda x: x[0][0]=="b", self.bugs.items())).values())
@@ -140,7 +140,6 @@ class game():
         cur_bug = self.bugs[piece]
         cur_bug.game_coordinate = coords
         cur_bug.z_index = z_index
-        cur_bug.tile.z_index = z_index
         new_coord = self.center + self.right_basis * cur_bug.game_coordinate[0] +  self.up_basis * cur_bug.game_coordinate[1] + z_index * self.climb_basis
         cur_bug.tile.generate_target().set_x(new_coord[0]).set_y(new_coord[1]).set_z(z_index).set_z_index(z_index)
         # cur_bug.tile.target.set_z_index(z_index)

@@ -938,6 +938,8 @@ class piece_rules_6(Scene):
             wP.z_index=0
             s.play(Wait(0.5))
             s.play(AnimationGroup(backing_game.move('bA1','wP'), Rotate(wP,TAU,rotate_vector(UP, -PI/3)),run_time=0.3))
+            bA.z_index = 1
+            wP.z_index=0
             s.play(AnimationGroup(backing_game.move('bA1','-wP'), Rotate(wP,TAU,UP),run_time=0.3))
             s.play(Wait(0.5))
             s.play(backing_game.move('bA1', '\\wP', curve_dir=1), run_time=0.4)
@@ -996,8 +998,205 @@ class beetle_gate(Scene):
         
         t1 = Tex('Google').move_to(3*UP + 1.5*RIGHT)
         t2 = Tex('En Passant').next_to(t1).shift(UP*0.07)
-        s.play(FadeIn(VGroup(t1, t2)))
         line = Line(t2.get_center() + LEFT *1.3, t2.get_center() + RIGHT * 1.3)
+        
+        s.play(FadeIn(VGroup(t1, t2), Write(line)))
         s.play(Write(line))
         s.play(FadeOut(line), Transform(t2, Tex('Beetle Gate').next_to(t1).shift(UP*0.07)))
         s.play(FadeOut(VGroup(t1, t2, *g.get_live_tiles(), *pieces, *text )))
+
+class show_classic_set(Scene):
+    def construct(self):
+        show_classic_set.play_scene(self)
+    def get_classic_game(s, analysis_file=None, from_side = False, center = ORIGIN):
+        if analysis_file :
+            with open(analysis_file, 'r') as file:
+                data = json.load(file)
+            g = game(s, analysis_json=data, center=center)
+        else:
+            g = game(s, center=center)
+        g.black_bugs = [i for i in g.black_bugs if i.name.split(' ')[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        g.white_bugs = [i for i in g.white_bugs if i.name.split(' ')[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        if from_side:
+
+            for i in range(11):
+                g.black_bugs[i].tile.move_to((1 if i >= 5 else 0) * RIGHT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2*RIGHT)
+                g.white_bugs[i].tile.move_to((1 if i >= 5 else 0) * LEFT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2 * LEFT)
+            return g
+        x = -5
+        for i in g.black_bugs:
+            i.tile.move_to(x*RIGHT+UP)
+            x+=1
+            
+        x = -5
+        for i in g.white_bugs:
+            i.tile.move_to(x*RIGHT+DOWN)
+            x+=1
+        return g
+    
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 54.m4a")
+        backing_game = show_classic_set.get_classic_game(s)
+        s.wait(1)
+        s.play(LaggedStart(*[FadeIn(i.tile, shift=UP) for i in backing_game.black_bugs ], lag_ratio = 0.1), LaggedStart(*[FadeIn(i.tile, shift=DOWN) for i in backing_game.white_bugs], lag_ratio = 0.1))
+        s.wait(3.5)
+        s.play(*[backing_game.bugs[i].tile.animate.shift(DOWN) for i in ['wA1', 'wA2', 'wA3']], *[backing_game.bugs[i].tile.animate.shift(UP) for i in ['bA1', 'bA2', 'bA3']])
+        s.play(*[backing_game.bugs[i].tile.animate.shift(DOWN) for i in ['wG1', 'wG2', 'wG3']], *[backing_game.bugs[i].tile.animate.shift(UP) for i in ['bG1', 'bG2', 'bG3']])
+        s.play(*[backing_game.bugs[i].tile.animate.shift(DOWN) for i in ['wB1', 'wB2']], *[backing_game.bugs[i].tile.animate.shift(UP) for i in ['bB1', 'bB2']])
+        s.play(*[backing_game.bugs[i].tile.animate.shift(DOWN) for i in ['wS1', 'wS2']], *[backing_game.bugs[i].tile.animate.shift(UP) for i in ['bS1', 'bS2']])
+        
+        # s.play([ScaleInPlace(backing_game.bugs[i].tile, 1.1) for i in ['wG1', 'wG2', 'wG3', 'bG1', 'bG2', 'bG3']])
+        # s.play([ScaleInPlace(backing_game.bugs[i].tile, 1.1) for i in ['wB1', 'wB2', 'bB1', 'bB2']])
+        # s.play([ScaleInPlace(backing_game.bugs[i].tile, 1.1) for i in ['wS1', 'wS2', 'bS1', 'bS2']])
+        # s.play([ScaleInPlace(i.tile, 1/1.1) for i in backing_game.black_bugs + backing_game.white_bugs])
+        for i in range(11):
+            backing_game.black_bugs[i].tile.generate_target().move_to((1 if i >= 5 else 0) * RIGHT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2*RIGHT)
+            backing_game.white_bugs[i].tile.generate_target().move_to((1 if i >= 5 else 0) * LEFT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2 * LEFT)
+        s.play(*[MoveAlongPath(i.tile, Line(i.tile.get_center(), i.tile.target.get_center())) for i in backing_game.black_bugs + backing_game.white_bugs])
+        for i in range(3):
+            backing_game.bugs[['wP','wL','wM'][i]].tile.move_to(4*LEFT + i*UP + DOWN)
+            backing_game.bugs[['bP','bL','bM'][i]].tile.move_to(4*RIGHT + i*UP + DOWN)
+        s.play(LaggedStart(*[FadeIn(backing_game.bugs[i].tile, shift=DOWN) for i in ['wP','wL','wM','bP','bL','bM']]))
+        s.wait(3)
+        s.play(LaggedStart(*[FadeOut(backing_game.bugs[i].tile, shift=DOWN) for i in ['wP','wL','wM','bP','bL','bM']]))
+        s.wait(3.5)
+
+
+class beginner_game(Scene):
+    def construct(self):
+        beginner_game.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 55.m4a")
+        s.add_sound(".\\media\\narration\\New Recording 56.m4a", time_offset=16)
+        analysis_file = ".\\media\\analysis_files\\analysis_17-Jun-2025_19_50_13.json"
+        backing_game = show_classic_set.get_classic_game(s, analysis_file, True)
+        classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        s.add(*[i.tile for i in classic_pieces])
+        #pieces = VGroup([i.tile for i in classic_pieces])
+        for i in classic_pieces:
+            i.tile.save_state()
+        #pieces.save_state()
+        s.play(Wait(1))
+        for i in range(23):
+            s.play(backing_game.next_move(), run_time=0.4)
+            s.wait(0.5)
+        s.play(Wait(3))
+        for i in range(11):
+            backing_game.black_bugs[i].tile.generate_target().move_to((1 if i >= 5 else 0) * RIGHT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2*RIGHT)
+            backing_game.white_bugs[i].tile.generate_target().move_to((1 if i >= 5 else 0) * LEFT+ (i if i < 5 else i - 5.5)* UP + 2*DOWN + 5.2 * LEFT)
+        s.play([MoveToTarget(i.tile) for i in backing_game.black_bugs + backing_game.white_bugs])
+        s.wait(1.5)
+
+class basic_tactics(Scene):
+    def get_text():
+        return [Tex("Pin").set_y(3), Tex("Gate").set_y(2)]
+    def construct(self):
+        basic_tactics.play_scene(self)
+    def play_scene(s):
+        backing_game = show_classic_set.get_classic_game(s,  from_side=True)
+        classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        s.add(*[i.tile for i in classic_pieces])
+        s.add_sound(".\\media\\narration\\New Recording 57.m4a")
+        tactics = ['True Pin', 'False Pin', 'Bidirectional Pin', 'Pin Replacement', 'Double Beetle Attack', 'Recover', 'Trigger Fill','Direct Drop', 'Pocket','Beetle Factory', 'Cavern','Ring', 'Concentric Ring','C Opening', 'Z Opening','Buffer Opening', 'Anti-Spawn', 'Ant Farm','Instant Double Ant', 'Spider re-index','Ambiguous Spider', 'Mosquito Shutdown','Proximity Pillbug Attack','Choking the Queen']
+        j = len(tactics)/2
+        t=[]
+        for i in range(len(tactics)):
+            t.append(Tex(tactics[i]).set(height=0.2).move_to(i//j*RIGHT*3 + i%j*DOWN*0.5 + LEFT*1.5 + UP*j/4))
+        s.play(LaggedStart(*[FadeIn(x) for x in t]))
+        s.wait(2)
+        dw = Tex("Don't worry, you don't need to know all these!").shift(DOWN * 3.2)
+        s.play(FadeIn(dw, shift=UP))
+        s.wait(3)
+        s.play(FadeOut(VGroup(*t,dw)))
+        text=basic_tactics.get_text()
+        s.play(FadeIn(text[0]))
+        s.play(FadeIn(text[1]))
+        s.wait(1)
+
+class pin(Scene):
+    def construct(self):
+        pin.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 58.m4a")
+        backing_game = show_classic_set.get_classic_game(s,  from_side=True)
+        classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        text = basic_tactics.get_text()
+        s.add(*[i.tile for i in classic_pieces], *text)
+        pointer = Triangle(color=WHITE, fill_opacity=1).rotate(-PI/2).scale(0.1).next_to(text[0],LEFT)
+        s.play(FadeIn(pointer, shift=UP), text[1].animate.set_opacity(0.3))
+        moves = ['wG1', 'bG1 wG1-', 'wQ /wG1', 'bQ bG1/','wA1 wQ\\', 'bA1 bG1\\']
+        s.wait(3)
+        s.play(backing_game.make_moves(moves))
+        s.wait(1)
+        s.play(backing_game.move('wA1', '/bA1'))
+        s.wait(1)
+        s.play(backing_game.bugs['bA1'].tile.animate.shift(RIGHT/2),LaggedStart( Wiggle(backing_game.bugs['wA1'].tile), Wiggle(VGroup([backing_game.bugs[i].tile for i in ['bQ','bG1','wQ','wG1']])), lag_ratio = 0.4))
+        s.play(backing_game.bugs['bA1'].tile.animate.shift(LEFT/2))
+        small_x=VGroup(Line(LEFT+UP,RIGHT+DOWN, color=RED),Line(LEFT+DOWN, RIGHT+UP, color=RED)).move_to(backing_game.bugs['bA1'].tile.get_center()).scale(0.5)
+        s.play(Write(small_x))        
+        s.wait(1)
+        #s.play(*[MoveAlongPath(spot[0], Line(spot[0].get_center(), spot[1])) for spot in spots], FadeOut(small_x))
+        s.play(FadeOut(small_x))
+
+
+class gate(Scene):
+    def construct(self):
+        gate.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 59.m4a")
+        backing_game = show_classic_set.get_classic_game(s,  from_side=True)
+        classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]
+        text = basic_tactics.get_text()
+        text[1].set_opacity(0.3)
+        pointer = Triangle(color=WHITE, fill_opacity=1).rotate(-PI/2).scale(0.1).next_to(text[0],LEFT)
+        moves = ['wG1', 'bG1 wG1-', 'wQ /wG1', 'bQ bG1/','wA1 wQ\\', 'bA1 bG1\\', 'wA1 /bA1']
+        backing_game.make_moves(moves)
+        backing_game.set_tile_positions()
+        s.add(*[i.tile for i in classic_pieces], *text, pointer)
+        line = Line(backing_game.bugs['wQ'].tile.get_center(), backing_game.bugs['wA1'].tile.get_center()).scale(0.33)
+        s.play(text[0].animate.set_opacity(0.3),text[1].animate.set_opacity(1), pointer.animate.next_to(text[1], LEFT))
+        s.wait(3)
+        s.play(Wiggle(backing_game.bugs['wA1'].tile))
+        s.play(Write(line))
+        s.wait(2)
+        hex = backing_game.hex_at_position('wQ-')
+        s.play(GrowFromCenter(hex))
+        s.wait(2)
+        s.play(LaggedStart(FadeOut(text[0]),FadeOut(text[1]), FadeOut(pointer), FadeOut(hex),FadeOut(line)))
+
+class defense_game(Scene):
+    def construct(self):
+        defense_game.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 60.m4a")
+        s.add_sound(".\\media\\narration\\New Recording 63.m4a", time_offset=11)
+        analysis_file = ".\\media\\analysis_files\\analysis_17-Jun-2025_20_14_11.json"
+        backing_game = show_classic_set.get_classic_game(s, analysis_file, True, UP+LEFT/2)
+        classic_pieces = [i for i in backing_game.bugs.values() if i.name.split(' ' )[1] not in ['Pillbug', 'Ladybug', 'Mosquito']]        
+        spots = []
+        for i in classic_pieces:
+           spots.append([i.tile, i.tile.get_center()])
+        moves = ['wG1', 'bG1 wG1-', 'wQ /wG1', 'bQ bG1/','wA1 wQ\\', 'bA1 bG1\\', 'wA1 /bA1']
+        backing_game.make_moves(moves)
+        backing_game.set_tile_positions()
+        s.add(*[i.tile for i in classic_pieces])
+        s.play(*[MoveAlongPath(spot[0], Line(spot[0].get_center(), spot[1])) for spot in spots])
+        pass_turns = [34,36,38,40,42,44,46]
+        pass_text = Text('White passes').move_to(3*LEFT + DOWN)
+        s.wait(3)
+        p =0.5
+        a= 0.3
+        for i in range(48):
+            if i in pass_turns:
+                backing_game.next_move()
+                s.remove(backing_game.bugs['wM'].tile)
+                s.wait(p)
+                s.play(FadeIn(pass_text),run_time=a)
+                continue
+            elif i-1 in pass_turns:
+                s.play(FadeOut(pass_text), run_time=p)
+            else:
+                s.wait(p)
+            s.play(backing_game.next_move(), run_time=a)
+        s.wait(2)
+        s.play(ShrinkToCenter(VGroup([i.tile for i in backing_game.white_bugs + backing_game.black_bugs])))
