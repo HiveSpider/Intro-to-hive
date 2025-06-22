@@ -1235,17 +1235,40 @@ class team(Scene):
     def construct(self):
         team.play_scene(self)
     def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 65.m4a")
         goal_text = Text("Goal").shift(DOWN/2).shift(UP*4)
         efficiency = Text("Efficiency").shift(2*UP, 3*LEFT)
         control = Text("Control").shift(2*UP, 3*RIGHT)
-        lines = (Line(DOWN, LEFT*3+1.5*DOWN),Line(DOWN, RIGHT*3+1.5*DOWN)).shift(UP*4)
+        lines = (Line(UP*3, LEFT*3+2.5*UP),Line(UP*3, RIGHT*3+2.5*UP))
         s.add(goal_text, efficiency, control, *lines)
+        s.wait(6)
         bg1=game(s, center=3*LEFT,tile_size=0.5)
         bg1.make_moves(['bQ','bA1 /bQ','bG1 -bA1','bB1 \\bG1','bS1 bB1/','bL bS1-',
                     'wQ bQ-','wA1 bA1\\','wG1 /bG1', 'wB1 -bB1', 'wS1 \\bS1','wL bL/'])
         bg1.set_tile_positions()
-        s.play(FadeIn(VGroup(bg1.get_live_bugs())))
-        
-        
-        
+        s.remove(*bg1.get_live_tiles())
+        s.play(FadeIn(VGroup(bg1.get_live_tiles())))
+        bg2 = game(s, tile_size=0.75)
+        bg2.make_moves(['wM', 'wP wM-', 'wB1 wM/', 'wL \\wM', 'wA1 -wM'])
+        bg2.set_tile_positions()
+        s.remove(*bg2.get_live_tiles())
+        s.play(LaggedStart(FadeIn(VGroup([bg2.bugs[i].tile for i in ['wP', 'wB1', 'wL', 'wA1']])), FadeIn(bg2.bugs['wM'].tile), lag_ratio=0.6))
+        bg3 = game(s, tile_size=0.75, center = 3*RIGHT, right_basis=rotate_vector(RIGHT, -PI/6), up_basis = rotate_vector(RIGHT, PI/6))
+        bg3.make_moves(['bQ', 'bP \\bQ','wB1 bP','wS1 -bP', 'wA1 bQ\\', 'wG1 /wA1', 'wG2 wA1-'])
+        bg3.set_tile_positions()
+        for i in bg3.get_live_tiles():
+            i.rotate(-PI/6)
+        s.remove(*bg3.get_live_tiles())
+        bg3.bugs['wB1'].tile.z_index = 1
+        s.play(LaggedStart(FadeIn(VGroup([bg3.bugs[i].tile for i in ['wA1', 'bQ', 'bP']])), FadeIn(VGroup([bg3.bugs[i].tile for i in ['wS1', 'wG1', 'wG2', 'wB1']])), lag_ratio = 0.6))
+        s.wait(2.5)
+        s.play(Wiggle(efficiency, rotation_angle=0))
+        s.wait(2.5)
+        s.play(Wiggle(control, rotation_angle=0))
+        left_questions = ['Should I try to free my ant?','Is now a good time to spawn the hopper?','Do my beetles need the support of my mosquito?']
+        right_questions = ['Should I stop their beetle from climbing?', 'Which pin spot would cut off more spawn points?', 'Can complicating the situation make finding a good move harder?']
+        s.play(LaggedStart(*[FadeIn(Tex(left_questions[i]).set(height=0.2).move_to(i*DOWN/2 + DOWN*2 + 3*LEFT)) for i in range(len(left_questions))], lag_ratio=0.4))
+        s.play(LaggedStart(*[FadeIn(Tex(right_questions[i]).set(height=0.2).move_to(i*DOWN/2 + DOWN*2 + 3*RIGHT)) for i in range(len(right_questions))], lag_ratio=0.4))
+        s.wait(5)
+        s.play(LaggedStart([ShrinkToCenter(i) for i in s.mobjects]))
         
