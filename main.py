@@ -2,6 +2,7 @@ from manim import *
 from hive import bug, game, assetPathOfficial
 from Dice import create_dice
 import json
+from math import sin
 
 class full_movie(Scene):
     def construct(self):
@@ -1272,3 +1273,82 @@ class team(Scene):
         s.wait(5)
         s.play(LaggedStart([ShrinkToCenter(i) for i in s.mobjects]))
         
+class thats_hive(Scene):
+    def construct(self):
+        thats_hive.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 66.m4a")
+        s.wait(2.2)
+        analysis_file='./media/analysis_files/analysis_24-Jun-2025_00_14_21.json'
+        with open(analysis_file, 'r') as file:
+            data = json.load(file)
+        bg= game(s, right_basis=DOWN, up_basis=rotate_vector(DOWN, PI/3), analysis_json=data)
+        counter = -4
+        for i in bg.black_bugs:
+            i.tile.move_to(UP*6 + counter*RIGHT)
+        counter = -4
+        for i in bg.white_bugs:
+            i.tile.move_to(DOWN*6 + counter*RIGHT)
+        topline= ['bQ', 'wA1', 'wS1', 'wB1', 'wG1', 'wM', 'wL']
+        bottomline= ['wQ', 'bA1', 'bS1', 'bB1', 'bG1', 'bM', 'bL']
+        for i in topline:
+            bg.bugs[i].tile.rotate(-2*PI/3)
+        for i in bottomline:
+            bg.bugs[i].tile.rotate(PI/3)
+        s.play(LaggedStart(LaggedStart(*[MoveAlongPath(bg.bugs[topline[i]].tile, Line(UP*1.5 + LEFT * 12, UP*1.5+RIGHT*2).add_line_to(UP*1.5+RIGHT*3 if i==0 else UP*1.5+RIGHT*3 + rotate_vector(LEFT, PI/3 * (i-1)))) for i in range(7)], lag_ratio=0.42),
+               LaggedStart(*[MoveAlongPath(bg.bugs[bottomline[i]].tile, Line(DOWN*1.5 + RIGHT * 12, DOWN*1.5+LEFT*2).add_line_to(DOWN*1.5+LEFT*3 if i==0 else DOWN*1.5+LEFT*3 + rotate_vector(RIGHT, PI/3 * (i-1)))) for i in range(7)], lag_ratio=0.25), lag_ratio=0.15),
+               )
+        s.play(LaggedStart(*[Rotate(bg.bugs[i].tile, -2*PI/3, run_time=0.3) for i in bottomline+topline]))
+        whiteline = [bg.bugs[i].tile for i in topline[1:4]+topline[4:]]
+        blackline = [bg.bugs[i].tile for i in bottomline[1:4]+bottomline[4:]]
+        wq=bg.bugs['wQ'].tile
+        bq=bg.bugs['bQ'].tile
+        s.wait(0.5)
+        s.play(Transform(wq, wq.copy().rotate(PI/6).move_to(wq.get_center() + RIGHT * 3 + DOWN)),Transform(bq, bq.copy().rotate(PI/6).move_to(bq.get_center() + LEFT * 3 + UP)), run_time=0.66)
+        s.play(*[Transform(blackline[i], blackline[i].copy().move_to(UP/2+ RIGHT*i*1.25 - 2.5*1.25*RIGHT).rotate(7*PI/6)) for i in range(6)],
+            *[Transform(whiteline[i], whiteline[i].copy().move_to(DOWN/2+ LEFT*i*1.25 - 2.5*1.25*LEFT).rotate(7*PI/6)) for i in range(6)])
+
+        def flip_func(i):
+            def func(mob, dt):
+                mob.shift(UP*dt * 0.9 * sin(s.time*(1+ 1/(i+1)+(i+3)%6) + i))
+            return func 
+        for i in range(6):
+            whiteline[i].add_updater(flip_func(i))
+            blackline[5-i].add_updater(flip_func(i))
+        s.wait(5)
+        for i in whiteline+blackline:
+            i.clear_updaters()
+        inventory = ['wA3', 'wS2', 'bG2', 'bG3','bS2']
+        spots = [6*RIGHT+UP/2, 6*RIGHT-UP/2, 6*LEFT+UP, 6*LEFT, 6*LEFT-UP]
+        for i in bg.bugs.keys():
+            if i in topline or i in bottomline:
+                continue
+            bg.bugs[i].tile.rotate(-PI/6)
+        for i in range(5):
+            bg.bugs[inventory[i]].tile.generate_target().move_to(spots[i])
+            
+        s.play(bg.next_n_moves(50), *[MoveToTarget(bg.bugs[i].tile) for i in inventory])
+        
+class skill_ceiling(Scene):        
+    def construct(self):
+        skill_ceiling.play_scene(self)
+    def play_scene(s):
+        # s.add_sound(".\\media\\narration\\New Recording 67.m4a")
+        analysis_file='./media/analysis_files/analysis_24-Jun-2025_00_14_21.json'
+        with open(analysis_file, 'r') as file:
+            data = json.load(file)
+        bg= game(s, right_basis=DOWN, up_basis=rotate_vector(DOWN, PI/3), analysis_json=data)
+        inventory = ['wA3', 'wS2', 'bG2', 'bG3','bS2']
+        spots = [6*RIGHT+UP/2, 6*RIGHT-UP/2, 6*LEFT+UP, 6*LEFT, 6*LEFT-UP]
+        for i in range(50):
+            bg.next_move()
+        for i in bg.all_tiles:
+            i.rotate(-PI/6)
+        for i in range(5):
+            bg.bugs[inventory[i]].tile.move_to(spots[i])
+        for i in bg.get_live_bugs():
+            i.tile.move_to(i.tile.target.get_center())
+        for i in  ['bQ', 'bA1', 'bS1', 'bB1', 'bG1', 'bM', 'bL'] :
+            bg.bugs[i].tile.rotate(PI)
+        s.add(*bg.all_tiles)
+        s.wait(1)
