@@ -158,6 +158,8 @@ class game():
     def get_location(self,position):
         coords = self.get_coords_from_position(position)
         return coords[0]*self.right_basis + coords[1]*self.up_basis + self.center
+    def arrow(self, from, to)
+        return Arrow(start=self.get_location(from), end=(self.get_location(to))
     def get_path_from(self, source, to, curve_dir=0, curve_to_append=None):
         a = self.get_location(source)
         b = self.get_location(to)
