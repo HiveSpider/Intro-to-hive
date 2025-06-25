@@ -1410,5 +1410,5 @@ class get_game(Scene):
         s.play(Wiggle(Group(*pic_mobs[4:7]), rotation_angle=0), run_time=1.5)
         s.wait(0.5)
         s.play(Wiggle(pic_mobs[7], rotation_angle=0), run_time=1.5)
-        s.play(LaggedStart(*[ShrinkToCenter(img) for img in pic_mobs]))
+        s.play(LaggedStart(*[ShrinkToCenter(img) for img in pic_mobs], lag_ratio = 0.1))
         
