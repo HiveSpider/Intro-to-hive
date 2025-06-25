@@ -1377,3 +1377,38 @@ class skill_ceiling(Scene):
         s.play(Wiggle(VGroup(bg.all_tiles)))
         s.play(FadeOut(*s.mobjects))
 
+class get_game(Scene):
+    def construct(self):
+        get_game.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 68.m4a")
+        hive_classic = ImageMobject("./media/images/hive-classic.jpg").scale_to_fit_height(3).move_to(1.6*UP+2*LEFT)
+        hive_pocket = ImageMobject("./media/images/hive-pocket.jpg").scale_to_fit_height(3).move_to(1.6*DOWN+1.5*LEFT)
+        hive_carbon = ImageMobject("./media/images/hive-carbon.jpg").scale_to_fit_height(3).move_to(1.6*DOWN+1.5*RIGHT)
+        hive_ultimate = ImageMobject("./media/images/hive-ultimate.png").scale_to_fit_height(3).move_to(1.6*UP+2*RIGHT)
+        text1=VGroup(Tex("All expansions", height=0.3), Tex("sold separately", height=0.3).shift(DOWN/2)).move_to(UP*1.4+LEFT*5.6)
+        text2=Tex("Ladybug and Mosquito included, Pillbug sold separately", height=0.3).move_to(DOWN*3.5)
+        text3=VGroup(Tex("All expansions", height=0.3), Tex("included, not yet", height=0.3).shift(DOWN/2),Tex("available everywhere", height=0.3).shift(DOWN)).move_to(UP*1.4+RIGHT*5.3)
+        
+        # s.add(hive_carbon, hive_classic, hive_pocket, hive_ultimate)
+        # s.add(text1, text2, text3)
+        s.play(FadeIn(hive_classic), FadeIn(text1))
+        s.play(FadeIn(hive_pocket),FadeIn(hive_carbon), FadeIn(text2))
+        s.play(FadeIn(hive_ultimate), FadeIn(text3))
+        s.wait(6)
+        s.play(FadeOut(text1, shift=LEFT), FadeOut(text2, shift=DOWN), FadeOut(text3, shift=RIGHT))
+        s.play(hive_classic.animate.shift(UP*5),hive_ultimate.animate.shift(UP*5),hive_pocket.animate.shift(DOWN*5),hive_carbon.animate.shift(DOWN*5))
+        s.wait(5)
+        s.remove(hive_ultimate, hive_carbon, hive_classic, hive_pocket)
+        pics = ["wood1.webp", "wood2.webp", "laser1.webp","laser2.webp", "3dprinter1.webp","3dprinter2.webp","3dprinter3.webp", "cat.webp"]
+        pic_mobs = [ImageMobject("./media/images/"+pics[x]).scale_to_fit_width(3).move_to(UP*1.75+LEFT*5.25 + DOWN*(x//4)*3.5 + RIGHT *(x%4)*3.5) for x in range(8)]
+        #s.add(*pic_mobs)
+        s.play(LaggedStart(*[FadeIn(x, shift=UP) for x in pic_mobs]))
+        s.wait(3.5)
+        s.play(Wiggle(Group(*pic_mobs[:2]), rotation_angle=0, run_time=1.5))
+        s.play(Wiggle(Group(*pic_mobs[2:4]), rotation_angle=0), run_time=1.5)
+        s.play(Wiggle(Group(*pic_mobs[4:7]), rotation_angle=0), run_time=1.5)
+        s.wait(0.5)
+        s.play(Wiggle(pic_mobs[7], rotation_angle=0), run_time=1.5)
+        s.play(LaggedStart(*[ShrinkToCenter(img) for img in pic_mobs]))
+        
