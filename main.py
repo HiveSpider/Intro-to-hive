@@ -1333,7 +1333,7 @@ class skill_ceiling(Scene):
     def construct(self):
         skill_ceiling.play_scene(self)
     def play_scene(s):
-        # s.add_sound(".\\media\\narration\\New Recording 67.m4a")
+        s.add_sound(".\\media\\narration\\New Recording 67.m4a")
         analysis_file='./media/analysis_files/analysis_24-Jun-2025_00_14_21.json'
         with open(analysis_file, 'r') as file:
             data = json.load(file)
@@ -1351,4 +1351,29 @@ class skill_ceiling(Scene):
         for i in  ['bQ', 'bA1', 'bS1', 'bB1', 'bG1', 'bM', 'bL'] :
             bg.bugs[i].tile.rotate(PI)
         s.add(*bg.all_tiles)
+        text = Tex("Thinking ahead...").shift(3*UP)
+        s.play(FadeIn(text))
+        arrow_spots = ["wB2 bA1", "bA1 bQ", "wS1 bQ/","bQ bQ\\"]
+        arrows = [bg.arrow(*i.split(' ')) for i in arrow_spots]
+        arrow_spots_2=["bB2 bG1", "bG1 wQ", "bM -wQ", "bA2 wQ-"]
+        arrows_2 = [bg.arrow(*i.split(' ')).set_color(LIGHT_GRAY) for i in arrow_spots_2]
+        arrow_spots_3=["wG3 wQ-", "bB1 bA1", "wA3 /wG1", "bG2 /bM", "wL -bM", "bL bP/", "wM -wL", "bA3 wS1\\"]
+        arrows_3 = [bg.arrow(*arrow_spots_3[i].split(' ')).set_color(LIGHT_GRAY if i % 2 else WHITE) for i in range(len(arrow_spots_3))]
+        s.play(LaggedStart(*[Write(i) for i in arrows], lag_ratio= 0.5, run_time=2))
+        s.play(LaggedStart(*[Write(i) for i in arrows_2], lag_ratio= 0.5, run_time=1.25))
+        s.play(LaggedStart(*[Write(i) for i in arrows_3], lag_ratio= 0.3, run_time=1))
+        s.play(*[FadeOut(x) for x in arrows+arrows_2+arrows_3+[text]])
+        s.play(VGroup(bg.all_tiles).animate.scale(0.5).shift(DOWN*2+3*RIGHT))
+        s.play(FadeIn(ImageMobject("./media/images/discord_forum.png").scale_to_fit_height(2).move_to(2*UP+4*LEFT)),
+               FadeIn(ImageMobject("./media/images/bgg_forum.png").scale_to_fit_height(2).move_to(5*LEFT)))
+        s.wait(3)
+        s.play(FadeIn(ImageMobject("./media/images/frasco.png").scale_to_fit_height(2).move_to(RIGHT+2.5*UP)),
+               FadeIn(ImageMobject("./media/images/ordepcubik.png").scale_to_fit_height(2).move_to(RIGHT *3+ UP/2)),
+               FadeIn(ImageMobject("./media/images/ringersoll.png").scale_to_fit_height(2).move_to(UP*2.5 + RIGHT * 5)))
         s.wait(1)
+        s.play(FadeIn(ImageMobject("./media/images/hive_book_whole.png").scale_to_fit_height(2).move_to(DOWN*3 + LEFT*6)),
+               FadeIn(ImageMobject("./media/images/canon_of_hive.png").scale_to_fit_height(2).move_to(DOWN *3+ LEFT*3)))
+        s.wait(4)
+        s.play(Wiggle(VGroup(bg.all_tiles)))
+        s.play(FadeOut(*s.mobjects))
+

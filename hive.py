@@ -109,6 +109,8 @@ class game():
     def get_coords_from_position(self,position):
         rel_bug = self.bugs["".join(x for x in position if x.isalnum())]
         rel_coor = rel_bug.game_coordinate
+        if rel_coor == None:
+            return rel_bug.tile.get_center()
         coords=[0, 0]
         if position[0]=="\\":
             coords = (rel_coor[0]-1,rel_coor[1] +1)
@@ -156,10 +158,14 @@ class game():
             return MoveAlongPath(cur_bug.tile, curve)
         return AnimationGroup(MoveToTarget(cur_bug.tile, run_time=run_time), run_time=run_time )
     def get_location(self,position):
+        rel_bug = self.bugs["".join(x for x in position if x.isalnum())]
+        rel_coor = rel_bug.game_coordinate
+        if rel_coor == None:
+            return rel_bug.tile.get_center()
         coords = self.get_coords_from_position(position)
         return coords[0]*self.right_basis + coords[1]*self.up_basis + self.center
-    def arrow(self, from, to)
-        return Arrow(start=self.get_location(from), end=(self.get_location(to))
+    def arrow(self, fro, to):
+        return Arrow(start=self.get_location(fro), end=(self.get_location(to)))
     def get_path_from(self, source, to, curve_dir=0, curve_to_append=None):
         a = self.get_location(source)
         b = self.get_location(to)
