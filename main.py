@@ -1412,3 +1412,110 @@ class get_game(Scene):
         s.play(Wiggle(pic_mobs[7], rotation_angle=0), run_time=1.5)
         s.play(LaggedStart(*[ShrinkToCenter(img) for img in pic_mobs], lag_ratio = 0.1))
         
+class use_analysis(Scene):
+    def construct(self):
+        use_analysis.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 69.m4a")
+        text = Tex('hivegame.com/analysis').shift(LEFT*3)
+        s.play(Write(text))
+        img = ImageMobject("./media/images/analysis/IMG_6528.jpg").scale_to_fit_width(4).shift(RIGHT*2.5)
+        s.play(GrowFromCenter(img))
+        s.wait(0.45)
+        for i in [29,30,35,36,53,37,38,39] + list(range(41,53)):
+            newImg= ImageMobject("./media/images/analysis/IMG_65" + str(i)+".jpg").scale_to_fit_width(4).shift(RIGHT*2.5)
+            s.add(newImg)
+            s.remove(img)
+            img = newImg
+            s.wait(0.4)
+        s.play(FadeOut(text), ShrinkToCenter(img))
+
+class online_plugs(Scene):
+    def construct(self):
+        self.add_sound(".\\media\\narration\\New Recording 70.m4a")
+        self.play(FadeIn(ImageMobject('./media/images/Captura_de_pantalla_2025-01-13_a_las_20.04.34.png').scale_to_fit_width(9).shift(UP), shift=UP))
+        self.wait(10)
+        self.play(FadeIn(ImageMobject("./media/images/discord-round-color-icon.webp").move_to(DOWN*3+LEFT*3).scale_to_fit_width(1),shift=DOWN))
+        self.play(FadeIn(ImageMobject("./media/images/reddit-icon.webp").move_to(DOWN*3).scale_to_fit_width(1),shift=DOWN))
+        self.play(FadeIn(ImageMobject("./media/images/facebook-round-color-icon.png").move_to(DOWN*3+RIGHT*3).scale_to_fit_width(1),shift=DOWN))
+        self.wait(0.3)
+        self.play(LaggedStart(*[FadeOut(s, shift=DOWN) for s in self.mobjects],lag_ratio=0.1))
+
+class thank_you(Scene):
+    def construct(self):
+        thank_you.play_scene(self)
+    def play_scene(s):
+        s.add_sound(".\\media\\narration\\New Recording 71.m4a")
+        bg = game(s, rotate_by_dot=False)
+        s.add(*bg.all_tiles)
+        for i in range(14):
+            bg.black_bugs[i].tile.move_to(10*RIGHT).rotate_about_origin(TAU*i/14).rotate(PI/3)
+            bg.white_bugs[i].tile.move_to(9*RIGHT).rotate_about_origin(TAU*i/14).rotate(-2*PI/3)
+            always_rotate(bg.black_bugs[i].tile, about_point=ORIGIN)
+            always_rotate(bg.white_bugs[i].tile, rate= -20*DEGREES, about_point=ORIGIN)
+            bg.white_bugs[i].tile.add_updater(lambda mob, dt: mob.shift(-dt*mob.get_center()/np.linalg.norm(mob.get_center())))
+            bg.black_bugs[i].tile.add_updater(lambda mob, dt: mob.shift(-dt*mob.get_center()/np.linalg.norm(mob.get_center())))
+        s.wait(6.5)
+        for i in range(14):
+            bg.black_bugs[i].tile.clear_updaters()
+            bg.white_bugs[i].tile.clear_updaters()
+            always_rotate(bg.black_bugs[i].tile, about_point=ORIGIN)
+            always_rotate(bg.white_bugs[i].tile, rate= -20*DEGREES, about_point=ORIGIN)
+        s.wait(3)
+        s.play(FadeIn(Tex("Thank you").shift(UP)))
+        s.play(FadeIn(Tex("Happy Hiving!")))
+        s.wait()
+        s.play(LaggedStart(*[FadeOut(x) for x in s.mobjects]))
+       
+class credits(Scene):
+    def construct(self):
+        credits.play_scene(self)
+    def play_scene(s):
+        text = ['Hive Set Images','Wollknäuel22', 'Frasco','Bergmansson','dyuraa','Emily', 'Hive Game Screenshot', 'OrdepCubik', 'Channels Featured','OrdepCubik', 'Ringersoll', 'Frasco', 'Script Supervisor','Frasco','Writing, Music, Animation','JT Herndon', ]
+        offset = [1]*len(text)
+        offset[0]=0
+        offset[6]=0
+        offset[8]=0
+        offset[12]=0
+        offset[14]=0
+        text_objects = []
+        point = Point().to_corner().shift(DOWN)
+        for i in range(len(text)):
+            text_objects.append(Tex(text[i]).next_to(point).shift(DOWN*i + offset[i]*RIGHT))
+            s.add(text_objects[i])
+            always_shift(text_objects[i], UP, rate = 0.8)
+        bg = game(s,rotate_by_dot=False)
+        wA1 = bg.bugs['wA1'].tile
+        wA2 = bg.bugs['wA2'].tile
+        wA3 = bg.bugs['wA3'].tile
+        wA4 = wA3.copy()
+        bM = bg.bugs['bM'].tile
+        j = 1
+        for i in (wA1, wA2, wA3, wA4, bM):
+            i.rotate(5*PI/6)
+            i.to_edge(UP).shift(j*RIGHT+2*UP)
+            j+=1
+        s.play(wA1.animate.shift(DOWN*0.5),wA3.animate.shift(DOWN*0.5))
+        for i in range(6):
+            s.play(wA2.animate.shift(DOWN),wA4.animate.shift(DOWN))
+            s.play(wA1.animate.shift(DOWN),wA3.animate.shift(DOWN))
+        s.play(wA2.animate.shift(DOWN*0.5),wA4.animate.shift(DOWN*0.5))
+        wQ = bg.bugs['wQ'].tile
+        wQ.set_x(9).shift( 2.5*DOWN).rotate(PI/3)
+        for _ in range(5):
+            s.play(wQ.animate.shift(LEFT), run_time = 0.66)
+        s.play(Rotate(wQ,-PI/2),run_time = 0.66)
+        for _ in range(3):
+            s.wait(0.4)
+            s.play(Rotate(wQ,PI/2), run_time = 0.66)
+            s.play(wQ.animate.shift(LEFT), run_time = 0.3)
+            s.play(Rotate(wQ,-PI/2), run_time = 0.66)
+        bM.move_to(wA1.get_center())
+        s.play(MoveAlongPath(wQ, CubicBezier(wQ.get_center(),wQ.get_center()+UP/3,wQ.get_center()+UP/3,wQ.get_center())), Transform(wA1, bM))
+        s.play(LaggedStart(*[Rotate(x, -PI/2) for x in [wA2, wA3, wA4]]))
+        s.play(Rotate(wA1, PI, run_time=0.3))
+        s.play(wA1.animate.set_y(5), run_time=0.5)
+        s.play(Rotate(wQ, PI))
+        s.play(wQ.animate.set_y(-6))
+        s.play(AnimationGroup([Rotate(x, PI/2) for x in [wA2, wA3, wA4]]))
+        s.play(Group(wA2, wA3, wA4).animate.shift(DOWN*4))
