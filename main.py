@@ -1519,3 +1519,25 @@ class credits(Scene):
         s.play(wQ.animate.set_y(-6))
         s.play(AnimationGroup([Rotate(x, PI/2) for x in [wA2, wA3, wA4]]))
         s.play(Group(wA2, wA3, wA4).animate.shift(DOWN*4))
+
+class thumbnail(Scene):
+    def construct(self):
+        thumbnail.play_scene(self)
+    def play_scene(s):
+        g = game(s, center=LEFT*2, tile_size=1.4)
+        g.make_moves(["wG1", "bL -wG1","wQ bL/", "bQ /wG1","bA1 -wQ", "bA2 \\wQ", "bA3 wQ/", "bS1 wQ-","wA1 bQ-", "wA2 bQ\\", "wA3 /bQ", "wS1 -bQ"])
+        g.set_tile_positions()
+        g.bugs["bA1"].tile.rotate(-2*PI/3)
+        g.bugs["bA2"].tile.rotate(-2*PI/3)
+        g.bugs["bA3"].tile.rotate(-PI*2/3)
+        g.bugs["bS1"].tile.rotate(2*PI/3)
+        g.bugs["bL"].tile.rotate(-PI/3)
+        g.bugs["wA1"].tile.rotate(PI/3)
+        g.bugs["wA2"].tile.rotate(PI/3)
+        g.bugs["wA3"].tile.rotate(PI/3)
+        g.bugs["wS1"].tile.rotate(-2*PI/3)
+        g.bugs["wG1"].tile.rotate(2*PI/3)
+        Group(*g.get_live_tiles()).rotate(-0.7)
+        s.add(*g.get_live_tiles())
+        s.add(ImageMobject('./media/images/hive_logo_web-1.png').shift(RIGHT*4+2*UP).scale(1.5))
+        s.add(Tex('Bug Chess!').shift(RIGHT*3+ DOWN*2).set(height = 1.2).rotate(0.3))
