@@ -1,5 +1,5 @@
 from manim import *
-from hive import bug, game, assetPathOfficial
+from hive import bug, game
 from Dice import create_dice
 import json
 from math import sin
