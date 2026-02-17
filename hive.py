@@ -250,6 +250,11 @@ class game():
                 t = x.tile
                 t.set_x(t.target.get_x()).set_y(t.target.get_y())
                 self.scene.add(t)
+    def move_along_path(self,piece, spots, curve_dir=0):
+        return self._move_along_path(piece, [[spot,curve_dir] for spot in spots])
+    def _move_along_path(self,piece, spots_with_curve_dirs):
+        spots_with_curve_dirs = [[piece,0]]+spots_with_curve_dirs
+        return Succession([MoveAlongPath(self.bugs[piece].tile,self.get_curve(i[0][0],i[1][0], i[1][1])) for i in [spots_with_curve_dirs[j:j+2] for j in range(len(spots_with_curve_dirs)-1)]])
 
 
 

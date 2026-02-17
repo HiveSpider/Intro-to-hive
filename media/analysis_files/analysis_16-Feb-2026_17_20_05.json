@@ -1,0 +1,179 @@
+{
+    "current_node": {
+        "node_id": 15,
+        "value": {
+            "turn": 15,
+            "piece": "wS1",
+            "position": "/wG2"
+        },
+        "parent": 14
+    },
+    "tree": {
+        "name": "analysis",
+        "nodes": [
+            {
+                "node_id": 0,
+                "value": {
+                    "turn": 1,
+                    "piece": "wL",
+                    "position": ""
+                },
+                "parent": null
+            },
+            {
+                "node_id": 1,
+                "value": {
+                    "turn": 2,
+                    "piece": "bL",
+                    "position": "wL-"
+                },
+                "parent": 0
+            },
+            {
+                "node_id": 2,
+                "value": {
+                    "turn": 3,
+                    "piece": "wQ",
+                    "position": "\\wL"
+                },
+                "parent": 1
+            },
+            {
+                "node_id": 3,
+                "value": {
+                    "turn": 4,
+                    "piece": "bQ",
+                    "position": "bL\\"
+                },
+                "parent": 2
+            },
+            {
+                "node_id": 4,
+                "value": {
+                    "turn": 5,
+                    "piece": "wA1",
+                    "position": "/wQ"
+                },
+                "parent": 3
+            },
+            {
+                "node_id": 5,
+                "value": {
+                    "turn": 6,
+                    "piece": "bP",
+                    "position": "bQ\\"
+                },
+                "parent": 4
+            },
+            {
+                "node_id": 6,
+                "value": {
+                    "turn": 7,
+                    "piece": "wA1",
+                    "position": "/bQ"
+                },
+                "parent": 5
+            },
+            {
+                "node_id": 7,
+                "value": {
+                    "turn": 8,
+                    "piece": "bM",
+                    "position": "bP/"
+                },
+                "parent": 6
+            },
+            {
+                "node_id": 8,
+                "value": {
+                    "turn": 9,
+                    "piece": "wG1",
+                    "position": "/wA1"
+                },
+                "parent": 7
+            },
+            {
+                "node_id": 9,
+                "value": {
+                    "turn": 10,
+                    "piece": "bA1",
+                    "position": "bM\\"
+                },
+                "parent": 8
+            },
+            {
+                "node_id": 10,
+                "value": {
+                    "turn": 11,
+                    "piece": "wG1",
+                    "position": "\\bM"
+                },
+                "parent": 9
+            },
+            {
+                "node_id": 11,
+                "value": {
+                    "turn": 12,
+                    "piece": "bA2",
+                    "position": "bP\\"
+                },
+                "parent": 10
+            },
+            {
+                "node_id": 12,
+                "value": {
+                    "turn": 13,
+                    "piece": "wG2",
+                    "position": "\\wQ"
+                },
+                "parent": 11
+            },
+            {
+                "node_id": 13,
+                "value": {
+                    "turn": 14,
+                    "piece": "bM",
+                    "position": "wG2/"
+                },
+                "parent": 12
+            },
+            {
+                "node_id": 14,
+                "value": {
+                    "turn": 15,
+                    "piece": "wS1",
+                    "position": "/wG2"
+                },
+                "parent": 13
+            },
+            {
+                "node_id": 15,
+                "value": {
+                    "turn": 16,
+                    "piece": "bA2",
+                    "position": "/wS1"
+                },
+                "parent": 14
+            }
+        ]
+    },
+    "hashes": {
+        "9315692584368274038": 7,
+        "5268704643999460996": 16,
+        "5753550354428453572": 6,
+        "11072282729232917829": 9,
+        "134918136572020304": 5,
+        "9933636654818954579": 0,
+        "6500033481364485245": 3,
+        "3675894809633074368": 2,
+        "8507693895358947286": 13,
+        "3193426524371585787": 8,
+        "5583568889121471594": 10,
+        "2798626475868064097": 12,
+        "9569121943633202175": 15,
+        "9071705322543625385": 14,
+        "3134152141365092189": 1,
+        "2287825463578836457": 4
+    },
+    "game_type": "MLP"
+}

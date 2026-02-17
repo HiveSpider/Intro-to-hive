@@ -6,3 +6,4 @@ media/images/*
 __pycache__/
 pyproject.toml
 uv.lock
+manim_chess/*
